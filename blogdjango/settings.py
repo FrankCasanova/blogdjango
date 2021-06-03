@@ -37,7 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog.apps.BlogConfig' #after create our models, we need specify to django that our app exist
+
+    # 3 party apps
+    'taggit',
+
+    # own apps
+    # after create our models, we need specify to django that our app exist
+    'blog.apps.BlogConfig',
 ]
 
 MIDDLEWARE = [
@@ -138,14 +144,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#email
+# email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.yahoo.com'
 EMAIL_HOST_USER = 'frankcasanova.cursos4@yahoo.com'
 EMAIL_HOST_PASSWORD = 'Inercia1!'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = True
-
-
-
-    
