@@ -5,6 +5,7 @@ from django.views.generic import ListView
 from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from taggit.models import Tag
+from django.db.models import Count
 
 
 # Create your views here.
@@ -100,12 +101,21 @@ def post_detail(request, year, month, day, post):
     else:
         comment_form = CommentForm()
 
+    # list of similar post
+    post_tags_ids = post.tags.values_list(
+        'id', flat=True)  # list of tags of the current post
+    similar_posts = Post.published.filter(
+        tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count(
+        'tags')).order_by('-same_tags', '-publish')[:4]
+
     return render(request,
                   template_name='blog/post/detail.html',
                   context={'post': post,
                            'comments': comments,
                            'new_comment': new_comment,
-                           'comment_form': comment_form})
+                           'comment_form': comment_form,
+                           'similar_posts': similar_posts, })
 
 
 class PostListView(ListView):
