@@ -1,13 +1,14 @@
-from django.contrib.postgres import search
+
 from django.shortcuts import render, get_object_or_404
-from .models import Post, Comment
+from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import EmailPostForm, CommentForm, SearchForm
 from django.core.mail import send_mail
 from taggit.models import Tag
-from django.db.models import Count, query
-from django.contrib.postgres.search import SearchVector
+from django.db.models import Count
+from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 
 # Create your views here.
@@ -149,14 +150,15 @@ def post_search(request):
     form = SearchForm()
     query = None
     results = []
-
     if 'query' in request.GET:
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
             results = Post.published.annotate(
-                search=SearchVector('title', 'body'),).filter(search=query)
-
-    return render(request, 'blog/post/search.html', {'form': form,
-                                                     'query': query,
-                                                     'results': results})
+                similarity=TrigramSimilarity('title', query),
+            ).filter(similarity__gt=0.1).order_by('-similarity')
+    return render(request,
+                  'blog/post/search.html',
+                  {'form': form,
+                   'query': query,
+                   'results': results})
