@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     # 3 party apps
     'taggit',
+    'django.contrib,postgres'
 
     # own apps
     # after create our models, we need specify to django that our app exist
