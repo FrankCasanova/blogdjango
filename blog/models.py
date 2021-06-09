@@ -41,7 +41,7 @@ class Post(models.Model):
     # when the post was published
     created = models.DateTimeField(auto_now_add=True)
     # the last time the post was update
-    update = models.DateTimeField(auto_now=True)
+    updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10,
                               choices=STATUS_CHOICES,  # status of a post
                               default='draft')
